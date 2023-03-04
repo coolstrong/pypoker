@@ -41,6 +41,11 @@ class CardTest(TestCase):
     def test_equal(self):
         self.assertTrue(Card.parse("QS") == Card.parse("QS"))
 
+    def test_to_from_int(self):
+        for i in range(50):
+            c = Card.random()
+            self.assertEqual(c, Card.from_int(c.to_int()))
+
 
 class CardSetTest(TestCase):
     def test_1(self):

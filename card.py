@@ -2,8 +2,10 @@ from functools import total_ordering
 from typing import *
 from dataclasses import dataclass, replace
 from enum import Enum
-from random import randint
+from random import randint, sample
 from collections.abc import Container
+import numpy as np
+from numpy import ravel_multi_index, unravel_index
 
 
 class Suit(Enum):
@@ -43,6 +45,11 @@ class Card:
             if card not in excluding:
                 return card
 
+    @staticmethod
+    def from_int(raveled: int):
+        t = cast(tuple[int, int], unravel_index(raveled, (13, 4)))
+        return Card(Suit(t[1]), t[0] + 2)
+
     def __lt__(self, other: Any) -> bool:
         return (self.value < other.value) or (
             (self.value == other.value) and (self.suit.value < other.suit.value)
@@ -59,6 +66,9 @@ class Card:
         ) or str(self.value)
 
         return f"{val}{self.suit.name}"
+
+    def to_int(self) -> int:
+        return int(ravel_multi_index((self.value - 2, self.suit.value), (13, 4)))
 
 
 class CardSet(Iterable[Card]):
@@ -83,17 +93,30 @@ class CardSet(Iterable[Card]):
         return CardSet(map(lambda s: cardFactory(s), handstr.split(" ")))
 
     @staticmethod
-    def random(n: int = 5, excluding: Container[Card] = ()) -> "CardSet":
-        # set: list[Card] = []
-        # for i in range(n):
-            # set.append(Card.random(excluding=(*excluding, *set)))
-        return CardSet(Card.random(excluding) for i in range(n))
+    def random(n: int = 5, excluding: Iterable[Card] = ()) -> "CardSet":
+        return CardSet(
+            map(
+                Card.from_int,
+                np.random.choice(
+                    np.delete(
+                        np.arange(52), tuple(map(lambda c: c.to_int(), excluding))
+                    ),
+                    n,
+                ),
+            )
+        )
 
     def __iter__(self):
-        return iter(self.cards)
-    
+        return self.cards.__iter__()
+
     def __str__(self) -> str:
         return " ".join(map(str, self.cards))
+
+    def __len__(self):
+        return self.cards.__len__()
+
+    def __contains__(self, __x):
+        return self.cards.__contains__(__x)
 
 
 __all__ = ["Card", "Suit", "CardSet"]
