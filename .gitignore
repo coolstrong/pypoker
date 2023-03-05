@@ -6,4 +6,6 @@ __pycache__
 
 /*.ipynb
 
-/dataset.csv
+/dataset*.csv
+
+/out

@@ -8,7 +8,7 @@ def compute_equity(
     hand: Collection[Card], table: Collection[Card], num_of_players: int, n=5000
 ) -> float:
     def cards_to_ndarray(cards: Iterable[Card]):
-        return np.fromiter(map(lambda c: c.to_int(), cards), int)
+        return np.fromiter(map(Card.to_int, cards), int)
 
     existingCards = np.concatenate(
         tuple(map(cards_to_ndarray, (hand, table)))

@@ -367,7 +367,7 @@ FourOfAKind = produce_combination(
 
 
 class StraightFlush(Combination):
-    value: ClassVar[int] = 8
+    value: ClassVar[int] = 9
     name: ClassVar[str] = "Straight Flush"
 
     highValue: int

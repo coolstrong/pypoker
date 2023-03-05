@@ -99,7 +99,7 @@ class CardSet(Iterable[Card]):
                 Card.from_int,
                 np.random.choice(
                     np.delete(
-                        np.arange(52), tuple(map(lambda c: c.to_int(), excluding))
+                        np.arange(52), tuple(map(Card.to_int, excluding))
                     ),
                     n,
                 ),
